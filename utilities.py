@@ -32,15 +32,18 @@ def getMeetList(season, month, base_url):
     #get the page after a random delay
     #I think the crawl delay is 10 seconds, so while it will take longer,
     #I will set a random delay of 10-14 seconds
-    sleepTime = randint(10, 14)
-    logging.debug("sleep time is %i seconds", sleepTime)
-    time.sleep(sleepTime)
-    response = requests.get(base_url, params=call_params)
-    logging.debug('%s', response.url)
+    # sleepTime = randint(10, 14)
+    # logging.debug("sleep time is %i seconds", sleepTime)
+    # time.sleep(sleepTime)
+    # response = requests.get(base_url, params=call_params)
+    # logging.debug('%s', response.url)
 
     #parse the page and create the list
     #use Beautiful Soup to parse the returned page
-    meetList_resp = BeautifulSoup(response.text, 'lxml')
+    #meetList_resp = BeautifulSoup(response.text, 'lxml')
+
+    #get the page with the meets for the season
+    meetList_resp = scrapePage(base_url)
 
     rtnList = []
     for item in meetList_resp.find_all('tr'):
@@ -83,6 +86,11 @@ def getMeetList(season, month, base_url):
             except:
                 temp_dict['meet_status'] = None
 
+            try:
+                temp_dict['meet_id_1'] = item.contents[1].a.attrs['href'].split("/")[-1]
+            except:
+                temp_dict['meet_id_1'] = None
+
             rtnList.append(temp_dict)
 
     logging.debug("Number of meets: %i", len(rtnList))
@@ -92,16 +100,19 @@ def getMeetList(season, month, base_url):
 ### add comments ####
 def getTeamList(meet_url):
 
-    logging.debug(meet_url)
-    sleepTime = randint(10, 14)
-    logging.debug("sleep time is %i seconds", sleepTime)
-    time.sleep(sleepTime)
-    response = requests.get(meet_url)
-    logging.debug('%s', response.url)
+    # logging.debug(meet_url)
+    # sleepTime = randint(10, 14)
+    # logging.debug("sleep time is %i seconds", sleepTime)
+    # time.sleep(sleepTime)
+    # response = requests.get(meet_url)
+    # logging.debug('%s', response.url)
 
-    #parse the swim club list page
-    #use Beautiful Soup to parse the returned page
-    clubList_resp = BeautifulSoup(response.text, 'lxml')
+    # #parse the swim club list page
+    # #use Beautiful Soup to parse the returned page
+    # clubList_resp = BeautifulSoup(response.text, 'lxml')
+
+    #get the page with the clubs attending the meet
+    clubList_resp = scrapePage(meet_url)
 
     rtnList = []
     for item in clubList_resp.find_all('option'):
@@ -122,6 +133,14 @@ def getTeamList(meet_url):
                 temp_dict['club_name'] = item.contents[0]
             except:
                 temp_dict['club_name'] = None
+            try:
+                temp_dict['meet_id_1'] = meet_url.split("/")[-1]
+            except:
+                temp_dict['meet_id_1'] = None
+            try:
+                temp_dict['meet_id_2'] = item.attrs['data-href'].split("/")[-2]
+            except:
+                temp_dict['meet_id_2'] = None
             rtnList.append(temp_dict)
 
     return rtnList
@@ -206,6 +225,10 @@ def getRaceResults(club_url):
     swimmer_list = []
     race_list = []
 
+    #recover the meet id from the url to attach to swimmer and race
+    #call it meet_id_2 since to be consistent with other data structure
+    meet_id_2 = club_url..split("/")[-2]
+
     #if 3 or more tables, there are results on the page
     if len(temp_table) < 3:
         logging.info("no results on the page")
@@ -240,6 +263,12 @@ def getRaceResults(club_url):
                     except:
                         temp_sw_dict['sw_gender'] = None
 
+                    #add the meet id
+                    try:
+                        temp_sw_dict['meet_id_2'] = meet_id_2
+                    except:
+                        temp_sw_dict['meet_id_2'] = None
+
                     #make the swimmer id and yob available
                     sw_id = temp_sw_dict['sw_id']
                     sw_yob = temp_sw_dict['sw_yob']
@@ -256,6 +285,11 @@ def getRaceResults(club_url):
                     temp_rc_dict['sw_id'] = sw_id
                     temp_rc_dict['sw_yob'] = sw_yob
                     temp_rc_dict['sw_gender'] = sw_gender
+                    #add the meet id
+                    try:
+                        temp_rc_dict['meet_id_2'] = meet_id_2
+                    except:
+                        temp_rc_dict['meet_id_2'] = None
 
                     #append to the return list
                     race_list.append(temp_rc_dict)
