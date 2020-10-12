@@ -218,16 +218,13 @@ def getRaceResults(club_url):
     temp_table = raceList_resp.find_all('table')
     logging.debug("number of tables %i", len(temp_table))
 
-    #create a gender table to use based on which table is being parsed
-    gender_dict = {0: "male", 1: "female", 2: "relay"}
-
     #create lists to hold swimmer and race info
     swimmer_list = []
     race_list = []
 
     #recover the meet id from the url to attach to swimmer and race
     #call it meet_id_2 since to be consistent with other data structure
-    meet_id_2 = club_url..split("/")[-2]
+    meet_id_2 = club_url.split("/")[-2]
 
     #if 3 or more tables, there are results on the page
     if len(temp_table) < 3:
@@ -240,7 +237,8 @@ def getRaceResults(club_url):
             firstRow = True
 
             #get the gender based on which table is being parsed
-            sw_gender = gender_dict[tt]
+            sw_gender = temp_table[tt].find('caption').contents[0].split()[0]
+            logging.debug("recovered gender from table head %s", sw_gender)
 
             #create variables to hold the last swimmer id and yob
             sw_id = None
