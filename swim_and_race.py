@@ -14,11 +14,11 @@ logging.basicConfig(level=logging.INFO)
 
 # dictionary to hold the season info
 season_dict = {}
-season_dict['season'] = '17'
-season_dict['meet_file'] = 'meets_2016_2017.csv'
-season_dict['club_file'] = 'clubs_2016_2017.csv'
-season_dict['swimmers_file'] = 'swimmers_2016_2017.csv'
-season_dict['race_file'] = 'races_2016_2017.csv'
+season_dict['season'] = '20'
+season_dict['meet_file'] = 'meets_2019_2020.csv'
+season_dict['club_file'] = 'clubs_2019_2020.csv'
+season_dict['swimmers_file'] = 'swimmers_2019_2020.csv'
+season_dict['race_file'] = 'races_2019_2020.csv'
 
 # read in the previously captured list of clubs for each meet for the season
 swims_df = pd.read_csv(season_dict['club_file'])

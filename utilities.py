@@ -32,18 +32,18 @@ def getMeetList(season, month, base_url):
     #get the page after a random delay
     #I think the crawl delay is 10 seconds, so while it will take longer,
     #I will set a random delay of 10-14 seconds
-    # sleepTime = randint(10, 14)
-    # logging.debug("sleep time is %i seconds", sleepTime)
-    # time.sleep(sleepTime)
-    # response = requests.get(base_url, params=call_params)
-    # logging.debug('%s', response.url)
+    sleepTime = randint(10, 14)
+    logging.debug("sleep time is %i seconds", sleepTime)
+    time.sleep(sleepTime)
+    response = requests.get(base_url, params=call_params)
+    logging.debug('%s', response.url)
 
     #parse the page and create the list
     #use Beautiful Soup to parse the returned page
-    #meetList_resp = BeautifulSoup(response.text, 'lxml')
+    meetList_resp = BeautifulSoup(response.text, 'lxml')
 
     #get the page with the meets for the season
-    meetList_resp = scrapePage(base_url)
+    #meetList_resp = scrapePage(base_url)
 
     rtnList = []
     for item in meetList_resp.find_all('tr'):
@@ -94,6 +94,7 @@ def getMeetList(season, month, base_url):
             rtnList.append(temp_dict)
 
     logging.debug("Number of meets: %i", len(rtnList))
+    logging.debug(rtnList)
     #return the list of meets
     return rtnList
 
